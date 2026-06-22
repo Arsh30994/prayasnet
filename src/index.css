@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: #0b1120;
+  color: #e6edf7;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow: hidden;
+}
+
+/* Ambient command-center backdrop */
+.app-backdrop {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(1200px 700px at 78% -10%, rgba(34, 211, 238, 0.08), transparent 60%),
+    radial-gradient(900px 600px at 8% 110%, rgba(167, 139, 250, 0.07), transparent 55%),
+    radial-gradient(700px 500px at 50% 50%, rgba(20, 32, 58, 0.5), transparent 70%),
+    #0b1120;
+  z-index: 0;
+}
+
+.app-backdrop::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(34, 211, 238, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(34, 211, 238, 0.05) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(circle at 50% 40%, black, transparent 85%);
+  opacity: 0.5;
+}
+
+/* Thin custom scrollbars */
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: #1e2a44;
+  border-radius: 999px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: #2a3a5c;
+}
+
+/* Utility: faint glass panel */
+.glass {
+  background: linear-gradient(180deg, rgba(22, 34, 60, 0.7), rgba(14, 22, 40, 0.7));
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(30, 42, 68, 0.9);
+}
+
+.text-glow-cyan {
+  text-shadow: 0 0 18px rgba(34, 211, 238, 0.55);
+}
+.text-glow-danger {
+  text-shadow: 0 0 18px rgba(244, 63, 94, 0.55);
+}
+.text-glow-safe {
+  text-shadow: 0 0 18px rgba(52, 211, 153, 0.55);
+}
+
+/* Scanline sweep used on streaming panels */
+.scanline {
+  position: relative;
+  overflow: hidden;
+}
+.scanline::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(34, 211, 238, 0.06) 50%,
+    transparent 100%
+  );
+  height: 40%;
+  animation: scan 3.2s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes scan {
+  0% {
+    transform: translateY(-110%);
+  }
+  100% {
+    transform: translateY(320%);
+  }
+}
+
+.mono-tnum {
+  font-variant-numeric: tabular-nums;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+}
