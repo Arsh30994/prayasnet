@@ -30,6 +30,17 @@ export const T = {
 
 export const PHASES = ['idle', 'incoming', 'scam', 'graph', 'fusion', 'shield', 'neutralized']
 
+// Manual step chapters — press number keys 1–6 to play each beat, then it pauses.
+// `start`/`stop` are contiguous so stepping in order never jumps.
+export const CHAPTERS = [
+  { n: 1, start: 0, stop: 2900, label: 'Incoming signal' },
+  { n: 2, start: 2900, stop: 9000, label: 'Scam call read' },
+  { n: 3, start: 9000, stop: 11200, label: 'Scam verdict' },
+  { n: 4, start: 11200, stop: 18800, label: 'Fraud network' },
+  { n: 5, start: 18800, stop: 25500, label: 'Intel report' },
+  { n: 6, start: 25500, stop: 30800, label: 'Citizen warned · saved' },
+]
+
 export const PHASE_LABEL = {
   idle: 'Standing by',
   incoming: 'Incoming signal',

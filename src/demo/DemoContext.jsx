@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState, useCallback } from 'react'
-import { getDemoState, TOTAL_DURATION, T } from './timeline'
+import { getDemoState, TOTAL_DURATION, T, CHAPTERS } from './timeline'
 
 const DemoContext = createContext(null)
 
@@ -19,6 +19,7 @@ export function DemoProvider({ children }) {
   const lastTsRef = useRef(null)
   const playingRef = useRef(false)
   const elapsedRef = useRef(0)
+  const stopAtRef = useRef(null) // auto-pause target for stepped chapters
 
   const tick = useCallback((ts) => {
     if (lastTsRef.current == null) lastTsRef.current = ts
@@ -26,13 +27,17 @@ export function DemoProvider({ children }) {
     lastTsRef.current = ts
     if (playingRef.current) {
       let next = elapsedRef.current + dt
-      if (next >= TOTAL_DURATION) {
-        next = TOTAL_DURATION
-        elapsedRef.current = next
-        setElapsed(next)
+      const stopAt = stopAtRef.current
+      if (stopAt != null && next >= stopAt) {
+        // reached the end of this chapter → hold here for narration
+        next = stopAt
+        stopAtRef.current = null
         playingRef.current = false
         setPlaying(false)
-        return // stop the loop at the end
+      } else if (next >= TOTAL_DURATION) {
+        next = TOTAL_DURATION
+        playingRef.current = false
+        setPlaying(false)
       }
       elapsedRef.current = next
       setElapsed(next)
@@ -61,13 +66,39 @@ export function DemoProvider({ children }) {
       setElapsed(0)
     }
     setView('operations')
+    stopAtRef.current = null // full play → run to the end
     playingRef.current = true
     setPlaying(true)
     lastTsRef.current = null
     ensureLoop()
   }, [ensureLoop])
 
+  // Play one chapter: jump to its start, run, then auto-pause at its end.
+  const playSegment = useCallback(
+    (start, stop) => {
+      setView('operations')
+      const s = Math.max(0, Math.min(TOTAL_DURATION, start))
+      elapsedRef.current = s
+      setElapsed(s)
+      stopAtRef.current = stop
+      playingRef.current = true
+      setPlaying(true)
+      lastTsRef.current = null
+      ensureLoop()
+    },
+    [ensureLoop],
+  )
+
+  const playChapter = useCallback(
+    (n) => {
+      const ch = CHAPTERS[n - 1]
+      if (ch) playSegment(ch.start, ch.stop)
+    },
+    [playSegment],
+  )
+
   const pause = useCallback(() => {
+    stopAtRef.current = null
     playingRef.current = false
     setPlaying(false)
   }, [])
@@ -80,6 +111,7 @@ export function DemoProvider({ children }) {
   const reset = useCallback(() => {
     playingRef.current = false
     setPlaying(false)
+    stopAtRef.current = null
     stopLoop()
     elapsedRef.current = 0
     setElapsed(0)
@@ -101,12 +133,15 @@ export function DemoProvider({ children }) {
   useEffect(() => () => stopLoop(), [stopLoop])
 
   // Keyboard shortcuts (the only way to drive the demo now — controls are hidden):
-  //   SPACE → start / pause      R → reset      L → replay from start
+  //   1–6 → step through each beat   SPACE → play all / pause   R → reset   L → replay
   useEffect(() => {
     const onKey = (e) => {
       const t = e.target
       if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return
-      if (e.code === 'Space' || e.key === 'Enter') {
+      if (e.key >= '1' && e.key <= '6') {
+        e.preventDefault()
+        playChapter(Number(e.key))
+      } else if (e.code === 'Space' || e.key === 'Enter') {
         e.preventDefault()
         toggle()
       } else if (e.key === 'r' || e.key === 'R') {
@@ -120,7 +155,7 @@ export function DemoProvider({ children }) {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [toggle, reset, play])
+  }, [toggle, reset, play, playChapter])
 
   // URL controls (handy for recording / deep-linking a moment):
   //   ?t=12000  → seek to 12s    ?play=1 → autoplay on load
@@ -149,10 +184,11 @@ export function DemoProvider({ children }) {
       reset,
       seek,
       seekTo,
+      playChapter,
       total: TOTAL_DURATION,
       state,
     }),
-    [elapsed, playing, view, selectedNode, play, pause, toggle, reset, seek, seekTo, state],
+    [elapsed, playing, view, selectedNode, play, pause, toggle, reset, seek, seekTo, playChapter, state],
   )
 
   return <DemoContext.Provider value={value}>{children}</DemoContext.Provider>

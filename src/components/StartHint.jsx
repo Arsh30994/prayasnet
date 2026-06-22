@@ -9,31 +9,10 @@ function Key({ children }) {
   )
 }
 
-// Subtle operator hint. Hidden while the scenario is playing so recordings stay clean.
+// Subtle operator hint, shown only on the calm idle screen so recordings stay clean.
 export default function StartHint() {
-  const { playing, elapsed, view, state } = useDemo()
-  const show = view === 'operations' && !playing
-
-  let content
-  if (elapsed === 0) {
-    content = (
-      <>
-        Press <Key>Space</Key> to run the live scenario
-      </>
-    )
-  } else if (state.finished) {
-    content = (
-      <>
-        Press <Key>R</Key> to reset · <Key>L</Key> to replay
-      </>
-    )
-  } else {
-    content = (
-      <>
-        <Key>Space</Key> resume · <Key>R</Key> reset
-      </>
-    )
-  }
+  const { playing, elapsed, view } = useDemo()
+  const show = view === 'operations' && !playing && elapsed === 0
 
   return (
     <AnimatePresence>
@@ -46,7 +25,8 @@ export default function StartHint() {
           className="pointer-events-none fixed bottom-9 left-1/2 z-50 -translate-x-1/2"
         >
           <div className="flex items-center gap-1.5 rounded-full border border-hairline bg-black/60 px-4 py-2 text-[12px] font-medium text-ink-dim backdrop-blur-md">
-            {content}
+            Press <Key>1</Key> to start — then <Key>2</Key> … <Key>6</Key> to step through ·{' '}
+            <Key>R</Key> reset
           </div>
         </motion.div>
       )}
