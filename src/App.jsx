@@ -1,8 +1,8 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { DemoProvider, useDemo } from './demo/DemoContext'
 import Header from './components/Header'
-import TransportBar from './components/TransportBar'
 import KpiStrip from './components/KpiStrip'
+import StartHint from './components/StartHint'
 import OrchestrationVisualizer from './components/OrchestrationVisualizer'
 import MainStage from './components/MainStage'
 import StatusBar from './components/StatusBar'
@@ -19,7 +19,6 @@ function Shell() {
 
       {view === 'operations' ? (
         <>
-          <TransportBar />
           <KpiStrip />
           <main className="grid min-h-0 flex-1 grid-cols-[minmax(400px,38%)_1fr] gap-4 px-6 pb-4">
             <OrchestrationVisualizer />
@@ -46,6 +45,7 @@ function Shell() {
       )}
 
       <StatusBar />
+      <StartHint />
     </div>
   )
 }

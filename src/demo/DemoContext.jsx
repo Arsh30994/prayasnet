@@ -100,6 +100,28 @@ export function DemoProvider({ children }) {
 
   useEffect(() => () => stopLoop(), [stopLoop])
 
+  // Keyboard shortcuts (the only way to drive the demo now — controls are hidden):
+  //   SPACE → start / pause      R → reset      L → replay from start
+  useEffect(() => {
+    const onKey = (e) => {
+      const t = e.target
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return
+      if (e.code === 'Space' || e.key === 'Enter') {
+        e.preventDefault()
+        toggle()
+      } else if (e.key === 'r' || e.key === 'R') {
+        e.preventDefault()
+        reset()
+      } else if (e.key === 'l' || e.key === 'L') {
+        e.preventDefault()
+        reset()
+        setTimeout(play, 40)
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [toggle, reset, play])
+
   // URL controls (handy for recording / deep-linking a moment):
   //   ?t=12000  → seek to 12s    ?play=1 → autoplay on load
   useEffect(() => {

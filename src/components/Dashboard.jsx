@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion'
-import { Activity, Radio, PhoneIncoming, ArrowRight, ShieldCheck } from 'lucide-react'
+import { Activity, PhoneIncoming, ShieldCheck } from 'lucide-react'
 import { useDemo } from '../demo/DemoContext'
 import { INCIDENT_FEED } from '../data/seed'
 import { cn } from '../lib/utils'
@@ -11,7 +11,7 @@ const SEV = {
 }
 
 export default function Dashboard() {
-  const { state, play } = useDemo()
+  const { state } = useDemo()
   const incoming = state.phase === 'incoming'
 
   return (
@@ -71,14 +71,13 @@ export default function Dashboard() {
                   </p>
                 </div>
               </div>
-              <button
-                onClick={play}
-                className="group flex items-center gap-2 rounded-xl bg-cyan/10 px-4 py-2.5 text-[13px] font-bold text-cyan ring-1 ring-cyan/30 transition-all hover:bg-cyan/20"
-              >
-                <Radio className="h-4 w-4" />
-                Run Live Scenario
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-              </button>
+              <div className="flex items-center gap-2 rounded-xl bg-safe/10 px-3.5 py-2.5 text-[12px] font-bold uppercase tracking-wider text-safe ring-1 ring-safe/25">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-safe/70" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-safe" />
+                </span>
+                Monitoring
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
