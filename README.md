@@ -1,7 +1,7 @@
 # PrayasNet — Digital Public Safety Command Center
 
 A multi-agent AI command center for detecting digital-arrest scams, fraud rings, and
-counterfeit currency in real time. Six specialised AI agents coordinate to surface a
+fraudulent job postings in real time. Six specialised AI agents coordinate to surface a
 threat, trace the money trail, compile an intelligence package, and protect the citizen —
 before the money is lost.
 
@@ -32,8 +32,27 @@ Best viewed on a 1600×900 (16:9) desktop screen.
   linked accounts, amount at risk, recommended actions, and source citations.
 - **Citizen Shield** — a chat assistant that gives any citizen an instant verdict on a
   suspicious message, in **English, Hindi, or Tamil**.
+- **Job-scam detection** — flags fraudulent job postings and fake recruiters with a
+  confidence score and a reviewer queue.
 - **Counterfeit-Vision** — flags fake currency down to the security thread and microprint.
 - **Geospatial map** — fraud hotspots and patrol priority across India.
+
+## Drill-downs
+
+Every tile, card, mesh node and incident row on the Operations view is clickable and
+opens a slide-over panel from the right. Panels close via the X button, a click on the
+overlay, or Esc.
+
+| Click | Panel |
+|-------|-------|
+| **Active threats** | Threat register with severity filter and sort. |
+| **₹ saved today** | 24-hour savings trend plus a per-category breakdown. |
+| **Scam calls blocked** | Call block log: caller, location, scam type, action taken. |
+| **Job scams flagged** | Flagged postings with platform, confidence and review status. |
+| **Agent node** | Status, live throughput, last five actions, live log stream. |
+| **Orchestrator hub** | Live signal-flow diagram and the routing decision log. |
+| **"All systems nominal"** | Uptime, per-agent health, latency graph, recent alerts. |
+| **Incident feed row** | Located map with pin, incident detail, and action timeline. |
 
 ## Views
 
@@ -56,4 +75,10 @@ Best viewed on a 1600×900 (16:9) desktop screen.
   and `FraudGraph` (the animated fraud-network expansion), with dedicated panels for scam
   detection, the intelligence package, Citizen Shield, counterfeit checks, and the map.
 - The six agents each have a distinct colour and icon identity: Scam-Call · Fraud-Graph ·
-  Fusion · Citizen-Shield · Geospatial · Counterfeit-Vision.
+  Fusion · Citizen-Shield · Geospatial · Job-Scam.
+- **Drill-downs** — `PanelContext` tracks the single open panel, `PanelHost` resolves it
+  to a body from `src/panels/`, and `SlideOver` renders the animation and dismissal.
+  Every clickable surface routes through `ui/Tile` so hover affordance is identical.
+- **Walkthrough** — the scripted Operations cinematic is driven from the on-screen
+  control bar (`DemoControls`): Start/Pause, a six-step stepper, and Reset. `?play=1`
+  autoplays and `?t=12000` deep-links to a moment, which is handy for recording.

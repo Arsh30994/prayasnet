@@ -5,8 +5,8 @@ import { CHAPTERS, TOTAL_DURATION } from '../demo/timeline'
 import Tile from './ui/Tile'
 import { cn } from '../lib/utils'
 
-// On-screen replacement for the old keyboard shortcuts: play/pause, a stepper
-// that jumps to any of the six beats, and reset.
+// Drives the scripted Operations cinematic: play/pause, a stepper that jumps
+// to any of the six beats, and reset.
 export default function DemoControls() {
   const { playing, elapsed, toggle, reset, playChapter, view } = useDemo()
 
