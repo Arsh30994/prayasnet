@@ -1,8 +1,10 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { DemoProvider, useDemo } from './demo/DemoContext'
+import { PanelProvider } from './panels/PanelContext'
+import PanelHost from './panels/PanelHost'
 import Header from './components/Header'
 import KpiStrip from './components/KpiStrip'
-import StartHint from './components/StartHint'
+import DemoControls from './components/DemoControls'
 import OrchestrationVisualizer from './components/OrchestrationVisualizer'
 import MainStage from './components/MainStage'
 import StatusBar from './components/StatusBar'
@@ -20,7 +22,8 @@ function Shell() {
       {view === 'operations' ? (
         <>
           <KpiStrip />
-          <main className="grid min-h-0 flex-1 grid-cols-[minmax(400px,38%)_1fr] gap-4 px-6 pb-4">
+          {/* pb leaves room for the floating walkthrough controls */}
+          <main className="grid min-h-0 flex-1 grid-cols-[minmax(400px,38%)_1fr] gap-4 px-6 pb-[76px]">
             <OrchestrationVisualizer />
             <MainStage />
           </main>
@@ -45,7 +48,8 @@ function Shell() {
       )}
 
       <StatusBar />
-      <StartHint />
+      <DemoControls />
+      <PanelHost />
     </div>
   )
 }
@@ -53,8 +57,10 @@ function Shell() {
 export default function App() {
   return (
     <DemoProvider>
-      <div className="app-backdrop" />
-      <Shell />
+      <PanelProvider>
+        <div className="app-backdrop" />
+        <Shell />
+      </PanelProvider>
     </DemoProvider>
   )
 }

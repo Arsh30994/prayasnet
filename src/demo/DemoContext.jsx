@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState, useCallback } from 'react'
-import { getDemoState, TOTAL_DURATION, T, CHAPTERS } from './timeline'
+import { getDemoState, TOTAL_DURATION, CHAPTERS } from './timeline'
 
 const DemoContext = createContext(null)
 
@@ -125,37 +125,7 @@ export function DemoProvider({ children }) {
     setElapsed(v)
   }, [])
 
-  // Jump to a labelled chapter (used by the chapter rail)
-  const seekTo = useCallback((key) => {
-    if (T[key] != null) seek(T[key] + 50)
-  }, [seek])
-
   useEffect(() => () => stopLoop(), [stopLoop])
-
-  // Keyboard shortcuts (the only way to drive the demo now — controls are hidden):
-  //   1–6 → step through each beat   SPACE → play all / pause   R → reset   L → replay
-  useEffect(() => {
-    const onKey = (e) => {
-      const t = e.target
-      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return
-      if (e.key >= '1' && e.key <= '6') {
-        e.preventDefault()
-        playChapter(Number(e.key))
-      } else if (e.code === 'Space' || e.key === 'Enter') {
-        e.preventDefault()
-        toggle()
-      } else if (e.key === 'r' || e.key === 'R') {
-        e.preventDefault()
-        reset()
-      } else if (e.key === 'l' || e.key === 'L') {
-        e.preventDefault()
-        reset()
-        setTimeout(play, 40)
-      }
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [toggle, reset, play, playChapter])
 
   // URL controls (handy for recording / deep-linking a moment):
   //   ?t=12000  → seek to 12s    ?play=1 → autoplay on load
@@ -183,12 +153,11 @@ export function DemoProvider({ children }) {
       toggle,
       reset,
       seek,
-      seekTo,
       playChapter,
       total: TOTAL_DURATION,
       state,
     }),
-    [elapsed, playing, view, selectedNode, play, pause, toggle, reset, seek, seekTo, playChapter, state],
+    [elapsed, playing, view, selectedNode, play, pause, toggle, reset, seek, playChapter, state],
   )
 
   return <DemoContext.Provider value={value}>{children}</DemoContext.Provider>

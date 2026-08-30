@@ -111,3 +111,34 @@ body {
   font-variant-numeric: tabular-nums;
   font-family: 'JetBrains Mono', ui-monospace, monospace;
 }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Uniform affordance for every clickable tile, row and mesh node.
+   Set --glow inline to tint the halo with the element's accent color; the
+   lift itself is driven by framer-motion so it never fights layout animation.
+   ────────────────────────────────────────────────────────────────────────── */
+.interactive {
+  --glow: rgba(34, 211, 238, 0.55);
+  cursor: pointer;
+  outline: none;
+  transition:
+    box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 220ms ease,
+    background-color 220ms ease;
+}
+.interactive:hover {
+  box-shadow:
+    0 0 0 1px var(--glow),
+    0 18px 34px -20px rgba(0, 0, 0, 0.95),
+    0 0 26px -8px var(--glow);
+}
+.interactive:focus-visible {
+  box-shadow:
+    0 0 0 2px var(--glow),
+    0 0 26px -6px var(--glow);
+}
+
+/* Fades the top/bottom edge of a scrolling log so lines enter and leave softly */
+.log-fade {
+  mask-image: linear-gradient(to bottom, transparent, black 12%, black 88%, transparent);
+}

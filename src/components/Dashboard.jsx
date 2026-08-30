@@ -1,23 +1,40 @@
 import { motion, AnimatePresence } from 'framer-motion'
-import { Activity, PhoneIncoming, ShieldCheck } from 'lucide-react'
+import { Activity, ChevronRight, PhoneIncoming, ShieldCheck } from 'lucide-react'
 import { useDemo } from '../demo/DemoContext'
+import { usePanel } from '../panels/PanelContext'
 import { INCIDENT_FEED } from '../data/seed'
+import Tile from './ui/Tile'
 import { cn } from '../lib/utils'
 
 const SEV = {
-  high: { dot: 'bg-danger', text: 'text-danger', ring: 'ring-danger/30' },
-  med: { dot: 'bg-amber', text: 'text-amber', ring: 'ring-amber/30' },
-  low: { dot: 'bg-cyan', text: 'text-cyan', ring: 'ring-cyan/30' },
+  high: { dot: 'bg-danger', text: 'text-danger', ring: 'ring-danger/30', accent: 'rgba(244,63,94,0.55)' },
+  med: { dot: 'bg-amber', text: 'text-amber', ring: 'ring-amber/30', accent: 'rgba(245,165,36,0.55)' },
+  low: { dot: 'bg-cyan', text: 'text-cyan', ring: 'ring-cyan/30', accent: 'rgba(34,211,238,0.55)' },
 }
 
 export default function Dashboard() {
   const { state } = useDemo()
+  const { openPanel } = usePanel()
   const incoming = state.phase === 'incoming'
 
   return (
     <div className="flex h-full flex-col gap-4">
-      {/* Hero / incoming */}
-      <div className="relative overflow-hidden rounded-2xl glass p-6 shadow-panel">
+      {/* Hero / incoming — opens the system health panel */}
+      <Tile
+        as="div"
+        role="button"
+        tabIndex={0}
+        accent={incoming ? 'rgba(245,165,36,0.55)' : 'rgba(52,211,153,0.5)'}
+        onClick={() => openPanel('health')}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            openPanel('health')
+          }
+        }}
+        aria-label="Open system health"
+        className="group relative overflow-hidden rounded-2xl glass p-6 shadow-panel"
+      >
         <AnimatePresence mode="wait">
           {incoming ? (
             <motion.div
@@ -51,6 +68,7 @@ export default function Dashboard() {
                   Source: Citizen-Shield app · South Delhi · routing to Orchestrator…
                 </p>
               </div>
+              <ChevronRight className="h-5 w-5 shrink-0 -translate-x-1 text-amber opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100" />
             </motion.div>
           ) : (
             <motion.div
@@ -71,18 +89,21 @@ export default function Dashboard() {
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-2 rounded-xl bg-safe/10 px-3.5 py-2.5 text-[12px] font-bold uppercase tracking-wider text-safe ring-1 ring-safe/25">
-                <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-safe/70" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-safe" />
-                </span>
-                Monitoring
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 rounded-xl bg-safe/10 px-3.5 py-2.5 text-[12px] font-bold uppercase tracking-wider text-safe ring-1 ring-safe/25">
+                  <span className="relative flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-safe/70" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-safe" />
+                  </span>
+                  Monitoring
+                </div>
+                <ChevronRight className="h-5 w-5 shrink-0 -translate-x-1 text-safe opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100" />
               </div>
             </motion.div>
           )}
         </AnimatePresence>
         <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-cyan/5 blur-3xl" />
-      </div>
+      </Tile>
 
       {/* Live incident feed */}
       <div className="glass flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl shadow-panel">
@@ -103,27 +124,43 @@ export default function Dashboard() {
                 initial={{ opacity: 0, x: -12 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.06 }}
-                className={cn(
-                  'flex items-center gap-3 rounded-xl border border-hairline/70 bg-black/20 px-3 py-2.5 transition-colors',
-                  isLive && incoming && 'ring-1 ' + sev.ring,
-                )}
               >
-                <span className={cn('h-2.5 w-2.5 shrink-0 rounded-full', sev.dot)}>
-                  {isLive && (
-                    <span className={cn('block h-2.5 w-2.5 animate-ping rounded-full', sev.dot)} />
-                  )}
-                </span>
-                <span
+                <Tile
+                  accent={sev.accent}
+                  lift={2}
+                  onClick={() => openPanel('incident', it)}
+                  aria-label={`Open incident ${it.tag} — ${it.text}`}
                   className={cn(
-                    'shrink-0 rounded-md px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide',
-                    'bg-white/5',
-                    sev.text,
+                    'group flex w-full items-center gap-3 rounded-xl border border-hairline/70 bg-black/20 px-3 py-2.5',
+                    isLive && incoming && 'ring-1 ' + sev.ring,
                   )}
                 >
-                  {it.tag}
-                </span>
-                <span className="flex-1 truncate text-[12.5px] text-ink-dim">{it.text}</span>
-                <span className="mono-tnum shrink-0 text-[11px] text-ink-faint">{it.time}</span>
+                  <span className={cn('h-2.5 w-2.5 shrink-0 rounded-full', sev.dot)}>
+                    {isLive && (
+                      <span
+                        className={cn('block h-2.5 w-2.5 animate-ping rounded-full', sev.dot)}
+                      />
+                    )}
+                  </span>
+                  <span
+                    className={cn(
+                      'shrink-0 rounded-md px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide',
+                      'bg-white/5',
+                      sev.text,
+                    )}
+                  >
+                    {it.tag}
+                  </span>
+                  <span className="flex-1 truncate text-[12.5px] text-ink-dim">{it.text}</span>
+                  <span className="mono-tnum shrink-0 text-[11px] text-ink-faint">{it.time}</span>
+                  <ChevronRight
+                    className={cn(
+                      'h-3.5 w-3.5 shrink-0 -translate-x-1 opacity-0 transition-all duration-300',
+                      'group-hover:translate-x-0 group-hover:opacity-100',
+                      sev.text,
+                    )}
+                  />
+                </Tile>
               </motion.div>
             )
           })}

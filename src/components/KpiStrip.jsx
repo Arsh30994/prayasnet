@@ -1,20 +1,38 @@
-import { motion, AnimatePresence } from 'framer-motion'
-import { AlertTriangle, IndianRupee, PhoneOff, Banknote, TrendingUp } from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
+import {
+  AlertTriangle,
+  Briefcase,
+  ChevronRight,
+  IndianRupee,
+  PhoneOff,
+  TrendingUp,
+} from 'lucide-react'
 import { useDemo } from '../demo/DemoContext'
+import { usePanel } from '../panels/PanelContext'
 import { KPIS } from '../data/seed'
 import AnimatedNumber from './ui/AnimatedNumber'
+import Tile from './ui/Tile'
 import { cn } from '../lib/utils'
 
-const ICONS = { AlertTriangle, IndianRupee, PhoneOff, Banknote }
+const ICONS = { AlertTriangle, IndianRupee, PhoneOff, Briefcase }
 const TONE = {
-  danger: { text: 'text-danger', ring: 'ring-danger/25', glow: 'from-danger/10' },
-  safe: { text: 'text-safe', ring: 'ring-safe/25', glow: 'from-safe/10' },
-  cyan: { text: 'text-cyan', ring: 'ring-cyan/25', glow: 'from-cyan/10' },
-  amber: { text: 'text-amber', ring: 'ring-amber/25', glow: 'from-amber/10' },
+  danger: { text: 'text-danger', ring: 'ring-danger/25', glow: 'from-danger/10', accent: 'rgba(244,63,94,0.6)' },
+  safe: { text: 'text-safe', ring: 'ring-safe/25', glow: 'from-safe/10', accent: 'rgba(52,211,153,0.6)' },
+  cyan: { text: 'text-cyan', ring: 'ring-cyan/25', glow: 'from-cyan/10', accent: 'rgba(34,211,238,0.6)' },
+  amber: { text: 'text-amber', ring: 'ring-amber/25', glow: 'from-amber/10', accent: 'rgba(245,165,36,0.6)' },
+}
+
+// Which slide-over each card opens.
+const PANEL_FOR = {
+  threats: 'threats',
+  saved: 'savings',
+  calls: 'calls',
+  jobs: 'jobscams',
 }
 
 export default function KpiStrip() {
   const { state } = useDemo()
+  const { openPanel } = usePanel()
 
   return (
     <div className="relative z-10 grid grid-cols-4 gap-3 px-6 py-3">
@@ -28,11 +46,13 @@ export default function KpiStrip() {
         const boosted = kpi.id === 'saved' && state.savedBoosted
 
         return (
-          <motion.div
+          <Tile
             key={kpi.id}
-            layout
+            accent={tone.accent}
+            onClick={() => openPanel(PANEL_FOR[kpi.id])}
+            aria-label={`${kpi.label} — open details`}
             className={cn(
-              'glass relative overflow-hidden rounded-2xl px-4 py-3 ring-1 transition-shadow duration-500',
+              'glass group relative w-full overflow-hidden rounded-2xl px-4 py-3 ring-1',
               tone.ring,
               boosted && 'shadow-glow-safe',
             )}
@@ -47,7 +67,16 @@ export default function KpiStrip() {
               <span className="text-[11px] font-semibold uppercase tracking-wider text-ink-faint">
                 {kpi.label}
               </span>
-              <Icon className={cn('h-4 w-4', tone.text)} />
+              <span className="flex items-center gap-1">
+                <ChevronRight
+                  className={cn(
+                    'h-3.5 w-3.5 -translate-x-1 opacity-0 transition-all duration-300',
+                    'group-hover:translate-x-0 group-hover:opacity-100',
+                    tone.text,
+                  )}
+                />
+                <Icon className={cn('h-4 w-4', tone.text)} />
+              </span>
             </div>
             <div className="mt-1.5 flex items-end gap-2">
               <AnimatedNumber
@@ -70,7 +99,7 @@ export default function KpiStrip() {
                 )}
               </AnimatePresence>
             </div>
-          </motion.div>
+          </Tile>
         )
       })}
     </div>

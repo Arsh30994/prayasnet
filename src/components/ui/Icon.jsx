@@ -5,6 +5,7 @@ import {
   ShieldCheck,
   MapPinned,
   ScanEye,
+  Briefcase,
   Cpu,
 } from 'lucide-react'
 
@@ -16,6 +17,7 @@ const MAP = {
   ShieldCheck,
   MapPinned,
   ScanEye,
+  Briefcase,
   Cpu,
 }
 
