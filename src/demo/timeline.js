@@ -30,8 +30,9 @@ export const T = {
 
 export const PHASES = ['idle', 'incoming', 'scam', 'graph', 'fusion', 'shield', 'neutralized']
 
-// Manual step chapters — press number keys 1–6 to play each beat, then it pauses.
-// `start`/`stop` are contiguous so stepping in order never jumps.
+// Manual step chapters driven by the on-screen stepper: playing one runs that
+// beat and then pauses. `start`/`stop` are contiguous so stepping in order
+// never jumps.
 export const CHAPTERS = [
   { n: 1, start: 0, stop: 2900, label: 'Incoming signal' },
   { n: 2, start: 2900, stop: 9000, label: 'Scam call read' },

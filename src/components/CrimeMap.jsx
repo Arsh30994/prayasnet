@@ -1,19 +1,8 @@
 import { motion } from 'framer-motion'
 import { MapPinned, Siren, Radar } from 'lucide-react'
 import { HOTSPOTS, PATROL_PRIORITY } from '../data/seed'
+import { INDIA_PATH, levelColor } from '../lib/india'
 import { cn } from '../lib/utils'
-
-// Stylized low-poly India silhouette (decorative, not survey-accurate)
-const INDIA =
-  'M38 18 L46 20 L56 26 L64 30 L72 33 L80 39 L73 43 L70 48 L72 53 L67 60 ' +
-  'L60 68 L54 76 L50 82 L45 88 L41 82 L37 75 L33 67 L30 61 L27 54 L24 49 ' +
-  'L22 45 L26 42 L28 36 L31 31 L34 24 Z'
-
-function levelColor(level) {
-  if (level >= 0.8) return '#F43F5E'
-  if (level >= 0.62) return '#F5A524'
-  return '#22D3EE'
-}
 
 const PRIORITY_TONE = {
   Critical: 'text-danger bg-danger/15',
@@ -54,7 +43,7 @@ export default function CrimeMap() {
 
             {/* India silhouette */}
             <path
-              d={INDIA}
+              d={INDIA_PATH}
               fill="url(#indiaFill)"
               stroke="#38BDF8"
               strokeOpacity="0.5"

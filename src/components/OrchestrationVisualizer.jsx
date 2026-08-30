@@ -1,8 +1,10 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { Cpu, Check, Loader2 } from 'lucide-react'
 import { useDemo } from '../demo/DemoContext'
+import { usePanel } from '../panels/PanelContext'
 import { AGENTS } from '../data/seed'
 import AgentIcon from './ui/Icon'
+import Tile from './ui/Tile'
 import { cn } from '../lib/utils'
 
 const RAD = 36 // ring radius in % of the square
@@ -20,7 +22,7 @@ const RESULT = {
   shield: 'Citizen warned',
 }
 
-function AgentNode({ agent, status }) {
+function AgentNode({ agent, status, onOpen }) {
   const { x, y } = pos(agent.angle)
   const active = status === 'waking' || status === 'thinking'
   const done = status === 'done'
@@ -31,13 +33,15 @@ function AgentNode({ agent, status }) {
       className="absolute z-20"
       style={{ left: `${x}%`, top: `${y}%`, transform: 'translate(-50%, -50%)' }}
     >
-      <motion.div
-        animate={{
-          scale: active ? 1.06 : 1,
-          opacity: dim ? 0.5 : 1,
-        }}
-        transition={{ duration: 0.5, ease: 'easeOut' }}
-        className="relative flex w-[120px] flex-col items-center"
+      <Tile
+        accent={`${agent.color}8c`}
+        onClick={onOpen}
+        aria-label={`Open ${agent.name} details`}
+        animate={{ scale: active ? 1.06 : 1, opacity: dim ? 0.55 : 1 }}
+        whileHover={{ y: -4, scale: active ? 1.12 : 1.06, opacity: 1 }}
+        whileTap={{ y: -1, scale: active ? 1.08 : 1.02 }}
+        transition={{ duration: 0.45, ease: 'easeOut' }}
+        className="relative flex w-[120px] flex-col items-center rounded-2xl px-1 py-1.5"
       >
         {/* node disc */}
         <div className="relative">
@@ -149,13 +153,14 @@ function AgentNode({ agent, status }) {
             </AnimatePresence>
           </div>
         </div>
-      </motion.div>
+      </Tile>
     </div>
   )
 }
 
 export default function OrchestrationVisualizer() {
   const { state } = useDemo()
+  const { openPanel } = usePanel()
   const orchActive = state.orchestrator !== 'idle'
   const orchComplete = state.orchestrator === 'complete'
 
@@ -169,14 +174,18 @@ export default function OrchestrationVisualizer() {
           </h2>
           <p className="text-[11px] text-ink-faint">Autonomous agent mesh · live</p>
         </div>
-        <span
+        <Tile
+          accent="rgba(34,211,238,0.55)"
+          lift={2}
+          onClick={() => openPanel('orchestrator')}
+          aria-label="Open orchestrator details"
           className={cn(
             'rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider',
             orchActive ? 'bg-cyan/15 text-cyan' : 'bg-white/5 text-ink-faint',
           )}
         >
           {orchComplete ? 'Mission complete' : orchActive ? 'Coordinating' : 'Idle'}
-        </span>
+        </Tile>
       </div>
 
       {/* stage */}
@@ -186,7 +195,7 @@ export default function OrchestrationVisualizer() {
           <svg
             viewBox="0 0 100 100"
             preserveAspectRatio="none"
-            className="absolute inset-0 h-full w-full"
+            className="pointer-events-none absolute inset-0 h-full w-full"
           >
             {/* faint orbit ring */}
             <circle
@@ -254,7 +263,12 @@ export default function OrchestrationVisualizer() {
 
           {/* agent nodes */}
           {AGENTS.map((agent) => (
-            <AgentNode key={agent.id} agent={agent} status={state.agents[agent.id]} />
+            <AgentNode
+              key={agent.id}
+              agent={agent}
+              status={state.agents[agent.id]}
+              onOpen={() => openPanel('agent', agent.id)}
+            />
           ))}
 
           {/* orchestrator hub */}
@@ -269,7 +283,7 @@ export default function OrchestrationVisualizer() {
                   {[0, 0.6].map((delay) => (
                     <motion.span
                       key={delay}
-                      className="absolute left-1/2 top-1/2 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full"
+                      className="pointer-events-none absolute left-1/2 top-1/2 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full"
                       style={{ boxShadow: '0 0 0 1.5px #22D3EE' }}
                       initial={{ opacity: 0.6, scale: 0.8 }}
                       animate={{ opacity: 0, scale: 2.1 }}
@@ -280,47 +294,66 @@ export default function OrchestrationVisualizer() {
               )}
             </AnimatePresence>
 
-            <motion.div
-              animate={{
-                boxShadow: orchActive
-                  ? ['0 0 24px -2px #22D3EEaa', '0 0 40px 0px #22D3EEcc', '0 0 24px -2px #22D3EEaa']
-                  : '0 0 0px #22D3EE00',
-              }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="relative grid h-20 w-20 place-items-center rounded-full border-2 bg-gradient-to-br from-elevated to-base"
-              style={{ borderColor: orchComplete ? '#34D399' : '#22D3EE' }}
+            <Tile
+              accent="rgba(34,211,238,0.7)"
+              lift={4}
+              onClick={() => openPanel('orchestrator')}
+              aria-label="Open orchestrator details"
+              className="flex flex-col items-center rounded-3xl px-2 py-1.5"
             >
-              {/* rotating accent ring */}
-              <motion.span
-                className="absolute inset-1 rounded-full border border-dashed"
-                style={{ borderColor: '#22D3EE44' }}
-                animate={{ rotate: 360 }}
-                transition={{ duration: 14, repeat: Infinity, ease: 'linear' }}
-              />
-              <div className="relative flex flex-col items-center">
-                <Cpu
-                  className="h-7 w-7"
-                  style={{ color: orchComplete ? '#34D399' : '#22D3EE' }}
-                  strokeWidth={2}
+              <motion.div
+                animate={{
+                  boxShadow: orchActive
+                    ? [
+                        '0 0 24px -2px #22D3EEaa',
+                        '0 0 40px 0px #22D3EEcc',
+                        '0 0 24px -2px #22D3EEaa',
+                      ]
+                    : '0 0 0px #22D3EE00',
+                }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="relative grid h-20 w-20 place-items-center rounded-full border-2 bg-gradient-to-br from-elevated to-base"
+                style={{ borderColor: orchComplete ? '#34D399' : '#22D3EE' }}
+              >
+                {/* rotating accent ring */}
+                <motion.span
+                  className="absolute inset-1 rounded-full border border-dashed"
+                  style={{ borderColor: '#22D3EE44' }}
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 14, repeat: Infinity, ease: 'linear' }}
                 />
+                <div className="relative flex flex-col items-center">
+                  <Cpu
+                    className="h-7 w-7"
+                    style={{ color: orchComplete ? '#34D399' : '#22D3EE' }}
+                    strokeWidth={2}
+                  />
+                </div>
+              </motion.div>
+              <div className="mt-2 text-center">
+                <div className="text-[12px] font-extrabold tracking-wide text-cyan text-glow-cyan">
+                  ORCHESTRATOR
+                </div>
               </div>
-            </motion.div>
-            <div className="mt-2 text-center">
-              <div className="text-[12px] font-extrabold tracking-wide text-cyan text-glow-cyan">
-                ORCHESTRATOR
-              </div>
-            </div>
+            </Tile>
           </div>
         </div>
       </div>
 
-      {/* legend */}
-      <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 border-t border-hairline/70 px-4 py-2.5">
+      {/* legend — each chip opens its agent */}
+      <div className="flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1 border-t border-hairline/70 px-3 py-2">
         {AGENTS.map((a) => {
           const status = state.agents[a.id]
           const lit = status !== 'idle'
           return (
-            <div key={a.id} className="flex items-center gap-1.5">
+            <Tile
+              key={a.id}
+              accent={`${a.color}8c`}
+              lift={2}
+              onClick={() => openPanel('agent', a.id)}
+              aria-label={`Open ${a.name} details`}
+              className="flex items-center gap-1.5 rounded-lg px-1.5 py-1"
+            >
               <span
                 className="h-2 w-2 rounded-full transition-opacity duration-500"
                 style={{ background: a.color, opacity: lit ? 1 : 0.35 }}
@@ -331,7 +364,7 @@ export default function OrchestrationVisualizer() {
               >
                 {a.short}
               </span>
-            </div>
+            </Tile>
           )
         })}
       </div>
