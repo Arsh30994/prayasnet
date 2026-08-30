@@ -8,7 +8,7 @@ import DemoControls from './components/DemoControls'
 import OrchestrationVisualizer from './components/OrchestrationVisualizer'
 import MainStage from './components/MainStage'
 import StatusBar from './components/StatusBar'
-import CounterfeitChecker from './components/CounterfeitChecker'
+import JobScamChecker from './components/JobScamChecker'
 import CrimeMap from './components/CrimeMap'
 import { CitizenShieldView } from './components/CitizenShield'
 
@@ -40,7 +40,7 @@ function Shell() {
               className="h-full"
             >
               {view === 'shield' && <CitizenShieldView />}
-              {view === 'counterfeit' && <CounterfeitChecker />}
+              {view === 'jobs' && <JobScamChecker />}
               {view === 'map' && <CrimeMap />}
             </motion.div>
           </AnimatePresence>

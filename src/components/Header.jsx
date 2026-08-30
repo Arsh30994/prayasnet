@@ -6,7 +6,7 @@ import { cn } from '../lib/utils'
 const VIEWS = [
   { id: 'operations', label: 'Operations' },
   { id: 'shield', label: 'Citizen Shield' },
-  { id: 'counterfeit', label: 'Counterfeit' },
+  { id: 'jobs', label: 'Job Scams' },
   { id: 'map', label: 'Crime Map' },
 ]
 
