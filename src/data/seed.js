@@ -509,24 +509,62 @@ export const SHIELD_CHAT = {
 }
 
 // ──────────────────────────────────────────────────────────────────────────
-//  P2 STUBS  — counterfeit checker + crime map
+//  JOB-SCAM SCAN  — the posting the Job-Scam Agent analyses on its own tab
 // ──────────────────────────────────────────────────────────────────────────
-export const COUNTERFEIT_RESULT = {
-  verdict: 'FAKE',
-  confidence: 91,
-  denomination: '₹500',
-  checks: [
-    { label: 'Security thread', ok: false, note: 'Continuous thread not detected' },
-    { label: 'Microprint “RBI”', ok: false, note: 'Mismatch / blurred' },
-    { label: 'Latent image', ok: false, note: 'Absent under tilt' },
-    { label: 'Bleed lines', ok: true, note: 'Present' },
-    { label: 'Watermark (Gandhi)', ok: false, note: 'Low contrast' },
-    { label: 'Serial font', ok: true, note: 'Consistent' },
+// `highlight` marks the exact phrase the agent flags inside the line, so the
+// scan result can underline the red flag in place rather than beside it.
+export const JOB_POSTING = {
+  platform: 'WhatsApp',
+  sender: 'HR Priya · +91 98••• ••412',
+  received: 'Today · 14:18',
+  lines: [
+    { text: 'CONGRATULATIONS! Your profile has been shortlisted by Meridian HR Solutions.' },
+    { text: 'Position: Data Entry Executive · Work From Home' },
+    {
+      text: 'Salary ₹45,000/month for just 3 hours of daily work.',
+      highlight: '₹45,000/month for just 3 hours',
+      label: 'Pay 4.2× benchmark',
+    },
+    {
+      text: 'No interview and no experience required — immediate joining.',
+      highlight: 'No interview and no experience required',
+      label: 'No screening process',
+    },
+    {
+      text: 'Pay a fully refundable registration fee of ₹2,500 to confirm your seat.',
+      highlight: 'refundable registration fee of ₹2,500',
+      label: 'Upfront fee demand',
+    },
+    {
+      text: 'Only 4 seats left. Reply YES within 2 hours or the offer lapses.',
+      highlight: 'within 2 hours',
+      label: 'Artificial urgency',
+    },
+    {
+      text: 'Do not use the company careers page. Message me directly here.',
+      highlight: 'Do not use the company careers page',
+      label: 'Channel isolation',
+    },
   ],
-  regions: [
-    { x: 12, y: 18, w: 18, h: 30, label: 'Security thread' },
-    { x: 60, y: 20, w: 26, h: 22, label: 'Microprint' },
-    { x: 64, y: 58, w: 22, h: 26, label: 'Watermark' },
+}
+
+export const JOB_SCAN_RESULT = {
+  verdict: 'FRAUDULENT',
+  confidence: 96,
+  company: 'Meridian HR Solutions',
+  role: 'Data Entry Executive',
+  checks: [
+    { label: 'Company registry (MCA)', ok: false, note: 'No CIN match for this name' },
+    { label: 'Upfront payment', ok: false, note: '₹2,500 "registration fee"' },
+    { label: 'Recruiter domain age', ok: false, note: 'Registered 6 days ago' },
+    { label: 'Pay vs role benchmark', ok: false, note: '4.2× market rate for the role' },
+    { label: 'Contact channel', ok: false, note: 'Personal WhatsApp only' },
+    { label: 'Posting text reuse', ok: true, note: 'Not a known template' },
+  ],
+  actions: [
+    'Takedown request filed with the platform',
+    'Payment VPA flagged to NPCI fraud registry',
+    '9 linked listings queued for reviewer confirmation',
   ],
 }
 
@@ -543,7 +581,7 @@ export const HOTSPOTS = [
 
 export const PATROL_PRIORITY = [
   { rank: 1, zone: 'Delhi NCR · Outer', reason: 'Mule-account density spike', level: 'Critical' },
-  { rank: 2, zone: 'Patna · Central', reason: 'Counterfeit ₹500 cluster', level: 'High' },
+  { rank: 2, zone: 'Patna · Central', reason: 'Fake recruiter posting cluster', level: 'High' },
   { rank: 3, zone: 'Mumbai · Western', reason: 'UPI QR-swap reports', level: 'High' },
   { rank: 4, zone: 'Kolkata · Salt Lake', reason: 'SIM-box activity', level: 'Elevated' },
 ]

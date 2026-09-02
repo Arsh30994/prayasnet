@@ -270,7 +270,7 @@ export const AGENT_ACTIVITY = {
       { ts: '14:19:26', text: 'Detected predatory loan-app install spike · Surat' },
       { ts: '13:54:07', text: 'Localised SIM-box voice gateway · Ahmedabad' },
       { ts: '13:31:12', text: 'Recomputed hotspot density across 8 metros' },
-      { ts: '13:02:40', text: 'Flagged counterfeit-note cluster drift · Patna' },
+      { ts: '13:02:40', text: 'Flagged job-scam posting cluster drift · Patna' },
     ],
     log: [
       'geo: 8 hotspots recomputed',

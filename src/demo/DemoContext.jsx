@@ -12,7 +12,7 @@ export function useDemo() {
 export function DemoProvider({ children }) {
   const [elapsed, setElapsed] = useState(0)
   const [playing, setPlaying] = useState(false)
-  const [view, setView] = useState('operations') // operations | counterfeit | map | shield
+  const [view, setView] = useState('operations') // operations | shield | jobs | map
   const [selectedNode, setSelectedNode] = useState(null)
 
   const rafRef = useRef(null)

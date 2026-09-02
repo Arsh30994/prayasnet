@@ -87,7 +87,7 @@ export function getDemoState(elapsed) {
     fusion: agentStatus(elapsed, T.fusionWake, 600, T.intelEnd, T.fusionDone),
     shield: agentStatus(elapsed, T.shieldWake, 500, T.shieldVerdict, T.shieldVerdict + 600),
     geo: 'idle',
-    counterfeit: 'idle',
+    jobscam: 'idle',
   }
 
   // orchestrator: active across the run, complete at the end
