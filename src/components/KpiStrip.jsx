@@ -3,6 +3,7 @@ import {
   AlertTriangle,
   Briefcase,
   ChevronRight,
+  FolderOpen,
   IndianRupee,
   PhoneOff,
   TrendingUp,
@@ -10,11 +11,12 @@ import {
 import { useDemo } from '../demo/DemoContext'
 import { usePanel } from '../panels/PanelContext'
 import { KPIS } from '../data/seed'
+import { EVIDENCE_BY_INCIDENT } from '../data/panels'
 import AnimatedNumber from './ui/AnimatedNumber'
 import Tile from './ui/Tile'
 import { cn } from '../lib/utils'
 
-const ICONS = { AlertTriangle, IndianRupee, PhoneOff, Briefcase }
+const ICONS = { AlertTriangle, IndianRupee, PhoneOff, Briefcase, FolderOpen }
 const TONE = {
   danger: { text: 'text-danger', ring: 'ring-danger/25', glow: 'from-danger/10', accent: 'rgba(244,63,94,0.6)' },
   safe: { text: 'text-safe', ring: 'ring-safe/25', glow: 'from-safe/10', accent: 'rgba(52,211,153,0.6)' },
@@ -22,12 +24,24 @@ const TONE = {
   amber: { text: 'text-amber', ring: 'ring-amber/25', glow: 'from-amber/10', accent: 'rgba(245,165,36,0.6)' },
 }
 
+const TOTAL_EVIDENCE = Object.values(EVIDENCE_BY_INCIDENT).reduce(
+  (sum, inc) => sum + (inc.evidenceItems?.length || 0),
+  0,
+)
+
 // Which slide-over each card opens.
-const PANEL_FOR = {
-  threats: 'threats',
-  saved: 'savings',
-  calls: 'calls',
-  jobs: 'jobscams',
+function openFor(kpi, openPanel) {
+  if (kpi.id === 'evidence') {
+    openPanel('evidence', { incidentId: 1 })
+    return
+  }
+  const map = {
+    threats: 'threats',
+    saved: 'savings',
+    calls: 'calls',
+    jobs: 'jobscams',
+  }
+  if (map[kpi.id]) openPanel(map[kpi.id])
 }
 
 export default function KpiStrip() {
@@ -35,7 +49,7 @@ export default function KpiStrip() {
   const { openPanel } = usePanel()
 
   return (
-    <div className="relative z-10 grid grid-cols-4 gap-3 px-6 py-3">
+    <div className="relative z-10 grid grid-cols-5 gap-3 px-6 py-3">
       {KPIS.map((kpi) => {
         const Icon = ICONS[kpi.icon]
         const tone = TONE[kpi.tone]
@@ -43,13 +57,14 @@ export default function KpiStrip() {
         if (kpi.id === 'saved') value = state.savedTotal
         if (kpi.id === 'threats') value = state.threatsActive
         if (kpi.id === 'calls' && state.phase !== 'idle') value = kpi.value + 1
+        if (kpi.id === 'evidence') value = TOTAL_EVIDENCE
         const boosted = kpi.id === 'saved' && state.savedBoosted
 
         return (
           <Tile
             key={kpi.id}
             accent={tone.accent}
-            onClick={() => openPanel(PANEL_FOR[kpi.id])}
+            onClick={() => openFor(kpi, openPanel)}
             aria-label={`${kpi.label} — open details`}
             className={cn(
               'glass group relative w-full overflow-hidden rounded-2xl px-4 py-3 ring-1',
@@ -98,6 +113,9 @@ export default function KpiStrip() {
                   </motion.span>
                 )}
               </AnimatePresence>
+              {kpi.trend && !boosted && (
+                <span className="mb-0.5 text-[10px] font-semibold text-amber">{kpi.trend}</span>
+              )}
             </div>
           </Tile>
         )

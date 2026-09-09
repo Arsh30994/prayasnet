@@ -1,8 +1,9 @@
 import { motion, AnimatePresence } from 'framer-motion'
-import { Activity, ChevronRight, PhoneIncoming, ShieldCheck } from 'lucide-react'
+import { Activity, ChevronRight, Folder, PhoneIncoming, ShieldCheck } from 'lucide-react'
 import { useDemo } from '../demo/DemoContext'
 import { usePanel } from '../panels/PanelContext'
 import { INCIDENT_FEED } from '../data/seed'
+import { getEvidenceByIncidentId } from '../data/panels'
 import Tile from './ui/Tile'
 import { cn } from '../lib/utils'
 
@@ -118,6 +119,8 @@ export default function Dashboard() {
           {INCIDENT_FEED.map((it, i) => {
             const sev = SEV[it.sev]
             const isLive = it.live
+            const evidence = getEvidenceByIncidentId(it.id)
+            const evidenceCount = evidence?.evidenceItems?.length ?? 0
             return (
               <motion.div
                 key={it.id}
@@ -152,6 +155,12 @@ export default function Dashboard() {
                     {it.tag}
                   </span>
                   <span className="flex-1 truncate text-[12.5px] text-ink-dim">{it.text}</span>
+                  {evidenceCount > 0 && (
+                    <span className="flex shrink-0 items-center gap-1 rounded-full bg-elevated px-2 py-0.5 text-[10px] font-bold text-amber ring-1 ring-amber/25">
+                      <Folder className="h-3 w-3" />
+                      {evidenceCount}
+                    </span>
+                  )}
                   <span className="mono-tnum shrink-0 text-[11px] text-ink-faint">{it.time}</span>
                   <ChevronRight
                     className={cn(

@@ -2,6 +2,7 @@ import {
   Activity,
   AlertTriangle,
   Cpu,
+  FolderOpen,
   HeartPulse,
   IndianRupee,
   PhoneOff,
@@ -10,7 +11,12 @@ import {
 import SlideOver from '../components/ui/SlideOver'
 import { usePanel } from './PanelContext'
 import { AGENTS_BY_ID } from '../data/seed'
-import { BLOCKED_CALLS_TOTAL, JOB_SCAMS_TOTAL, ACTIVE_THREATS } from '../data/panels'
+import {
+  BLOCKED_CALLS_TOTAL,
+  JOB_SCAMS_TOTAL,
+  ACTIVE_THREATS,
+  getEvidenceByIncidentId,
+} from '../data/panels'
 import AgentIcon from '../components/ui/Icon'
 import ThreatsPanel from './ThreatsPanel'
 import SavingsPanel from './SavingsPanel'
@@ -20,6 +26,7 @@ import AgentPanel from './AgentPanel'
 import OrchestratorPanel from './OrchestratorPanel'
 import SystemHealthPanel from './SystemHealthPanel'
 import IncidentPanel, { INCIDENT_ACCENT } from './IncidentPanel'
+import EvidencePanel from './EvidencePanel'
 
 // One SlideOver instance for the whole app, so open/close always animates
 // cleanly and swapping panels never stacks overlays.
@@ -95,6 +102,18 @@ function resolve(type, payload) {
         icon: Activity,
         badge: payload.live ? 'live' : undefined,
         body: <IncidentPanel incident={payload} />,
+      }
+    }
+    case 'evidence': {
+      const incidentId = payload?.incidentId
+      const evidence = getEvidenceByIncidentId(incidentId)
+      return {
+        title: evidence ? `Case File: ${evidence.incidentTitle}` : 'Evidence Locker',
+        subtitle: evidence?.caseId || 'Collected evidence for this incident',
+        accent: '#F5A524',
+        icon: FolderOpen,
+        badge: 'locker',
+        body: <EvidencePanel incidentId={incidentId} />,
       }
     }
     default:

@@ -308,6 +308,7 @@ export const KPIS = [
   { id: 'saved', label: '₹ saved today', value: 18742000, money: true, tone: 'safe', icon: 'IndianRupee' },
   { id: 'calls', label: 'Scam calls blocked', value: 1284, tone: 'cyan', icon: 'PhoneOff' },
   { id: 'jobs', label: 'Job scams flagged', value: 367, tone: 'amber', icon: 'Briefcase' },
+  { id: 'evidence', label: 'Evidence collected', value: 8, tone: 'amber', icon: 'FolderOpen', trend: '+3 this hour' },
 ]
 
 // Each incident carries the drill-down detail its slide-over panel renders:

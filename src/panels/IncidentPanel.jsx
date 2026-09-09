@@ -1,5 +1,8 @@
-import { IndianRupee, MapPinned } from 'lucide-react'
+import { FolderOpen, IndianRupee, MapPinned } from 'lucide-react'
 import { Card, Chip, IncidentMiniMap, Section, Timeline } from './widgets'
+import { usePanel } from './PanelContext'
+import { getEvidenceByIncidentId } from '../data/panels'
+import Tile from '../components/ui/Tile'
 import { cn } from '../lib/utils'
 
 export const INCIDENT_ACCENT = { high: '#F43F5E', med: '#F5A524', low: '#22D3EE' }
@@ -23,7 +26,9 @@ function Field({ label, value, className }) {
 }
 
 export default function IncidentPanel({ incident }) {
+  const { openPanel } = usePanel()
   const accent = INCIDENT_ACCENT[incident.sev]
+  const hasEvidence = Boolean(getEvidenceByIncidentId(incident.id))
 
   return (
     <>
@@ -82,6 +87,27 @@ export default function IncidentPanel({ incident }) {
         <Card>
           <Timeline steps={incident.timeline} accent={accent} />
         </Card>
+      </Section>
+
+      <Section title="Evidence">
+        <Tile
+          accent="rgba(245,165,36,0.55)"
+          onClick={() => openPanel('evidence', { incidentId: incident.id })}
+          aria-label="View evidence locker"
+          className="flex w-full items-center gap-3 rounded-xl border border-amber/30 bg-amber/[0.08] px-3 py-3"
+        >
+          <span className="grid h-9 w-9 place-items-center rounded-lg bg-amber/15">
+            <FolderOpen className="h-4.5 w-4.5 text-amber" />
+          </span>
+          <div className="min-w-0 flex-1 text-left">
+            <div className="text-[13px] font-bold text-ink">View Evidence</div>
+            <div className="text-[11px] text-ink-faint">
+              {hasEvidence
+                ? 'Open the evidence locker for this case'
+                : 'Locker empty · collection still in progress'}
+            </div>
+          </div>
+        </Tile>
       </Section>
     </>
   )
