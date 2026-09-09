@@ -397,6 +397,8 @@ export const ALERT_TONE = {
 //  8 · EVIDENCE LOCKER  (keyed by INCIDENT_FEED numeric ids)
 // ──────────────────────────────────────────────────────────────────────────
 export const EVIDENCE_BY_INCIDENT = {
+  // Keys match INCIDENT_FEED numeric ids. Aliases (incident_001 / incident_002)
+  // are added below so prompt-style IDs also resolve.
   1: {
     incidentId: 1,
     incidentTitle: 'Digital Arrest Scam — South Delhi',
@@ -532,16 +534,30 @@ export const EVIDENCE_BY_INCIDENT = {
   },
 }
 
+// Prompt-style string aliases → same locker records as the numeric feed ids.
+EVIDENCE_BY_INCIDENT.incident_001 = EVIDENCE_BY_INCIDENT[1]
+EVIDENCE_BY_INCIDENT['1'] = EVIDENCE_BY_INCIDENT[1]
+EVIDENCE_BY_INCIDENT.incident_002 = EVIDENCE_BY_INCIDENT[5]
+EVIDENCE_BY_INCIDENT['5'] = EVIDENCE_BY_INCIDENT[5]
+
+/**
+ * Resolve an evidence locker by incident id.
+ * Accepts numeric feed ids (1, 5), stringified numbers ("1"), or
+ * prompt-style keys ("incident_001", "incident_002").
+ */
 export function getEvidenceByIncidentId(incidentId) {
-  return EVIDENCE_BY_INCIDENT[incidentId] || null
+  if (incidentId == null) return null
+  return (
+    EVIDENCE_BY_INCIDENT[incidentId] ||
+    EVIDENCE_BY_INCIDENT[String(incidentId)] ||
+    null
+  )
 }
 
 export function getAllEvidenceTypes() {
+  // Only iterate canonical numeric records — aliases would duplicate.
+  const canonical = [EVIDENCE_BY_INCIDENT[1], EVIDENCE_BY_INCIDENT[5]].filter(Boolean)
   return [
-    ...new Set(
-      Object.values(EVIDENCE_BY_INCIDENT).flatMap((incident) =>
-        incident.evidenceItems.map((item) => item.type),
-      ),
-    ),
+    ...new Set(canonical.flatMap((incident) => incident.evidenceItems.map((item) => item.type))),
   ]
 }

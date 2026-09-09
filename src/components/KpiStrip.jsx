@@ -24,10 +24,9 @@ const TONE = {
   amber: { text: 'text-amber', ring: 'ring-amber/25', glow: 'from-amber/10', accent: 'rgba(245,165,36,0.6)' },
 }
 
-const TOTAL_EVIDENCE = Object.values(EVIDENCE_BY_INCIDENT).reduce(
-  (sum, inc) => sum + (inc.evidenceItems?.length || 0),
-  0,
-)
+const TOTAL_EVIDENCE = [EVIDENCE_BY_INCIDENT[1], EVIDENCE_BY_INCIDENT[5]]
+  .filter(Boolean)
+  .reduce((sum, inc) => sum + (inc.evidenceItems?.length || 0), 0)
 
 // Which slide-over each card opens.
 function openFor(kpi, openPanel) {
