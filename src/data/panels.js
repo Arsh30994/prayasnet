@@ -270,7 +270,7 @@ export const AGENT_ACTIVITY = {
       { ts: '14:19:26', text: 'Detected predatory loan-app install spike · Surat' },
       { ts: '13:54:07', text: 'Localised SIM-box voice gateway · Ahmedabad' },
       { ts: '13:31:12', text: 'Recomputed hotspot density across 8 metros' },
-      { ts: '13:02:40', text: 'Flagged counterfeit-note cluster drift · Patna' },
+      { ts: '13:02:40', text: 'Flagged job-scam posting cluster drift · Patna' },
     ],
     log: [
       'geo: 8 hotspots recomputed',
@@ -391,4 +391,173 @@ export const ALERT_TONE = {
   warn: { text: 'text-amber', chip: 'bg-amber/12 text-amber', label: 'WARN' },
   error: { text: 'text-danger', chip: 'bg-danger/12 text-danger', label: 'ERROR' },
   ok: { text: 'text-safe', chip: 'bg-safe/12 text-safe', label: 'OK' },
+}
+
+// ──────────────────────────────────────────────────────────────────────────
+//  8 · EVIDENCE LOCKER  (keyed by INCIDENT_FEED numeric ids)
+// ──────────────────────────────────────────────────────────────────────────
+export const EVIDENCE_BY_INCIDENT = {
+  // Keys match INCIDENT_FEED numeric ids. Aliases (incident_001 / incident_002)
+  // are added below so prompt-style IDs also resolve.
+  1: {
+    incidentId: 1,
+    incidentTitle: 'Digital Arrest Scam — South Delhi',
+    caseId: 'CASE-2026-0622-0473',
+    evidenceItems: [
+      {
+        id: 'ev_001',
+        type: 'call_recording',
+        title: 'Scam Call Recording',
+        description: '3m 42s — Caller impersonating Delhi Police, demanded ₹4.8L',
+        timestamp: '2026-06-22T14:31:58Z',
+        confidence: 0.97,
+        metadata: {
+          duration: '3:42',
+          callerNumber: '+91-98XXXXXX23',
+          location: 'Delhi',
+          transcript: 'NLP analysis available',
+          redFlags: ['digital arrest', 'immediate payment', 'police impersonation'],
+        },
+      },
+      {
+        id: 'ev_002',
+        type: 'whatsapp_forward',
+        title: 'WhatsApp Message Forward',
+        description: 'Fake arrest warrant image sent to victim via WhatsApp',
+        timestamp: '2026-06-22T14:32:04Z',
+        confidence: 0.94,
+        metadata: {
+          sender: '+91-98XXXXXX23',
+          mediaType: 'image/jpeg',
+          fileSize: '234 KB',
+          forwarded: true,
+          ocrText: 'Delhi Police Department - Arrest Warrant #4821',
+        },
+      },
+      {
+        id: 'ev_003',
+        type: 'bank_transaction',
+        title: 'Suspicious Transaction Attempt',
+        description: '₹4,80,000 transfer blocked to flagged mule account',
+        timestamp: '2026-06-22T14:32:19Z',
+        confidence: 0.99,
+        metadata: {
+          amount: 480000,
+          targetAccount: 'XXXX-XXXX-4471',
+          bank: 'Beneficiary A/C',
+          status: 'BLOCKED',
+          ifsc: 'HDFC0001234',
+          fraudCategory: 'mule_account',
+        },
+      },
+      {
+        id: 'ev_004',
+        type: 'document',
+        title: 'Fake Arrest Warrant',
+        description: 'Forged Delhi Police letterhead with victim details and fake case number',
+        timestamp: '2026-06-22T14:32:06Z',
+        confidence: 0.96,
+        metadata: {
+          fileType: 'image/png',
+          resolution: '1080x1920',
+          ocrConfidence: 0.91,
+          forgeryIndicators: ['inconsistent font', 'wrong letterhead format', 'invalid case number'],
+        },
+      },
+      {
+        id: 'ev_005',
+        type: 'network_link',
+        title: 'Linked Mule Accounts',
+        description: '203-node mule network connected to primary flagged account',
+        timestamp: '2026-06-22T14:32:11Z',
+        confidence: 0.89,
+        metadata: {
+          accountCount: 203,
+          totalValue: 47000000,
+          network: 'fraud_graph_001',
+          primaryAccount: 'XXXX-XXXX-4471',
+          linkedBanks: ['HDFC', 'SBI', 'ICICI', 'Axis', 'PNB'],
+        },
+      },
+    ],
+  },
+  5: {
+    incidentId: 5,
+    incidentTitle: 'Fake Job Scam — Patna',
+    caseId: 'CASE-2026-0622-0481',
+    evidenceItems: [
+      {
+        id: 'ev_006',
+        type: 'whatsapp_forward',
+        title: 'Fake Job Offer Message',
+        description: 'Unsolicited job offer from fake HR · Meridian HR Solutions',
+        timestamp: '2026-06-22T14:22:07Z',
+        confidence: 0.96,
+        metadata: {
+          sender: '+91-89XXXXXX45',
+          mediaType: 'text',
+          companyName: 'Meridian HR Solutions (fake)',
+          redFlags: ['unsolicited offer', 'above-market salary', 'urgent joining'],
+        },
+      },
+      {
+        id: 'ev_007',
+        type: 'document',
+        title: 'Forged Offer Letter',
+        description: 'Fake company letterhead with incorrect GST and registration details',
+        timestamp: '2026-06-22T14:22:31Z',
+        confidence: 0.93,
+        metadata: {
+          fileType: 'image/png',
+          resolution: '1242x2208',
+          ocrConfidence: 0.88,
+          forgeryIndicators: ['invalid GST number', 'fake registration', 'mismatched logo'],
+        },
+      },
+      {
+        id: 'ev_008',
+        type: 'bank_transaction',
+        title: 'Processing Fee Demand',
+        description: 'Requested ₹2,500 as "registration fee" — classic advance fee fraud',
+        timestamp: '2026-06-22T14:23:05Z',
+        confidence: 0.98,
+        metadata: {
+          amount: 2500,
+          targetAccount: 'XXXX-XXXX-7823',
+          bank: 'Kotak Mahindra Bank',
+          status: 'BLOCKED',
+          ifsc: 'KKBK0123456',
+          fraudCategory: 'advance_fee_fraud',
+        },
+      },
+    ],
+  },
+}
+
+// Prompt-style string aliases → same locker records as the numeric feed ids.
+EVIDENCE_BY_INCIDENT.incident_001 = EVIDENCE_BY_INCIDENT[1]
+EVIDENCE_BY_INCIDENT['1'] = EVIDENCE_BY_INCIDENT[1]
+EVIDENCE_BY_INCIDENT.incident_002 = EVIDENCE_BY_INCIDENT[5]
+EVIDENCE_BY_INCIDENT['5'] = EVIDENCE_BY_INCIDENT[5]
+
+/**
+ * Resolve an evidence locker by incident id.
+ * Accepts numeric feed ids (1, 5), stringified numbers ("1"), or
+ * prompt-style keys ("incident_001", "incident_002").
+ */
+export function getEvidenceByIncidentId(incidentId) {
+  if (incidentId == null) return null
+  return (
+    EVIDENCE_BY_INCIDENT[incidentId] ||
+    EVIDENCE_BY_INCIDENT[String(incidentId)] ||
+    null
+  )
+}
+
+export function getAllEvidenceTypes() {
+  // Only iterate canonical numeric records — aliases would duplicate.
+  const canonical = [EVIDENCE_BY_INCIDENT[1], EVIDENCE_BY_INCIDENT[5]].filter(Boolean)
+  return [
+    ...new Set(canonical.flatMap((incident) => incident.evidenceItems.map((item) => item.type))),
+  ]
 }

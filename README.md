@@ -32,9 +32,9 @@ Best viewed on a 1600×900 (16:9) desktop screen.
   linked accounts, amount at risk, recommended actions, and source citations.
 - **Citizen Shield** — a chat assistant that gives any citizen an instant verdict on a
   suspicious message, in **English, Hindi, or Tamil**.
-- **Job-scam detection** — flags fraudulent job postings and fake recruiters with a
-  confidence score and a reviewer queue.
-- **Counterfeit-Vision** — flags fake currency down to the security thread and microprint.
+- **Job-scam detection** — checks a forwarded job posting against company registry, pay
+  benchmarks and payment demands, marks the red-flag phrases in place, and returns a
+  confidence-scored verdict plus a reviewer queue.
 - **Geospatial map** — fraud hotspots and patrol priority across India.
 
 ## Drill-downs
@@ -60,7 +60,7 @@ overlay, or Esc.
 |-----|---------------|
 | **Operations** | The orchestration mesh and the active incident workspace. |
 | **Citizen Shield** | Chat assistant; forward a message → instant verdict. EN / हिं / த. |
-| **Counterfeit** | Currency scan → authenticity verdict with highlighted note regions. |
+| **Job Scams** | Posting scan → fraud verdict with the red-flag phrases marked in place. |
 | **Crime Map** | Stylized India map with fraud hotspots and a patrol-priority panel. |
 
 ---
@@ -73,7 +73,7 @@ overlay, or Esc.
   generated from a fixed seed (`mulberry32`) so it renders identically every time.
 - **Core visuals** — `OrchestrationVisualizer` (the orchestrator hub and six agent nodes)
   and `FraudGraph` (the animated fraud-network expansion), with dedicated panels for scam
-  detection, the intelligence package, Citizen Shield, counterfeit checks, and the map.
+  detection, the intelligence package, Citizen Shield, job-scam checks, and the map.
 - The six agents each have a distinct colour and icon identity: Scam-Call · Fraud-Graph ·
   Fusion · Citizen-Shield · Geospatial · Job-Scam.
 - **Drill-downs** — `PanelContext` tracks the single open panel, `PanelHost` resolves it

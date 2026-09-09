@@ -1,9 +1,12 @@
 import { useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Share2, X, Crosshair, TrendingUp } from 'lucide-react'
+import { Share2, X, Crosshair, TrendingUp, FolderOpen } from 'lucide-react'
 import { useDemo } from '../demo/DemoContext'
+import { usePanel } from '../panels/PanelContext'
 import { NETWORK, NODE_COLORS, nodeDetail } from '../data/seed'
-import { formatINR, cn } from '../lib/utils'
+import { getEvidenceByIncidentId } from '../data/panels'
+import { formatINR } from '../lib/utils'
+import Tile from './ui/Tile'
 
 const EDGE_COLOR = {
   infra: 'rgba(244,63,94,0.55)',
@@ -20,8 +23,13 @@ const TYPE_META = {
 
 export default function FraudGraph() {
   const { state, selectedNode, setSelectedNode } = useDemo()
+  const { openPanel } = usePanel()
   const { graphCount, graphComplete } = state
   const { nodes, edges } = NETWORK
+
+  // The live Operations walkthrough is always the South Delhi digital-arrest case.
+  const relatedEvidence = getEvidenceByIncidentId(1)
+  const hasRelatedEvidence = Boolean(relatedEvidence?.evidenceItems?.length)
 
   const visibleEdges = useMemo(
     () => edges.filter((e) => e.a < graphCount && e.b < graphCount),
@@ -225,6 +233,20 @@ export default function FraudGraph() {
                 <Row k="Opened" v={selectedInfo.opened} />
                 <Row k="KYC" v={selectedInfo.kyc} />
               </div>
+              {hasRelatedEvidence && (
+                <Tile
+                  accent="rgba(245,165,36,0.55)"
+                  lift={2}
+                  onClick={() => openPanel('evidence', { incidentId: 1 })}
+                  className="mt-3 flex w-full items-center gap-2 rounded-lg border border-amber/30 bg-amber/[0.08] px-2.5 py-2"
+                >
+                  <FolderOpen className="h-3.5 w-3.5 text-amber" />
+                  <span className="text-[11px] font-bold text-ink">View Related Evidence</span>
+                  <span className="mono-tnum ml-auto text-[10px] text-amber">
+                    {relatedEvidence.evidenceItems.length}
+                  </span>
+                </Tile>
+              )}
             </motion.div>
           )}
         </AnimatePresence>

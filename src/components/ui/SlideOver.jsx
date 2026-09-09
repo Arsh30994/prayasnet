@@ -20,10 +20,11 @@ export default function SlideOver({
   useEffect(() => {
     if (!open) return
     const onKey = (e) => {
-      if (e.key === 'Escape') {
-        e.preventDefault()
-        onClose()
-      }
+      if (e.key !== 'Escape') return
+      // Nested preview modals (z > slide-over) handle Esc themselves.
+      if (document.querySelector('[data-evidence-preview]')) return
+      e.preventDefault()
+      onClose()
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
